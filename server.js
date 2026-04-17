@@ -1,13 +1,10 @@
 const http = require("http");
 const https = require("https");
 
-const API_KEY = process.env.ANTHROPIC_API_KEY || "여기에_API_키_입력";
 const PORT = process.env.PORT || 3000;
 
-const ALLOWED_ORIGIN = "*"; // 필요시 본인 도메인으로 변경
-
 const server = http.createServer((req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", ALLOWED_ORIGIN);
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
@@ -33,6 +30,8 @@ const server = http.createServer((req, res) => {
       return;
     }
 
+    const apiKey = (process.env.ANTHROPIC_API_KEY || "").trim();
+
     const payload = JSON.stringify({
       model: "claude-sonnet-4-20250514",
       max_tokens: 1000,
@@ -46,7 +45,7 @@ const server = http.createServer((req, res) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": API_KEY,
+        "x-api-key": apiKey,
         "anthropic-version": "2023-06-01",
         "Content-Length": Buffer.byteLength(payload)
       }
@@ -73,5 +72,5 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`✅ Anna & Bread proxy server running on port ${PORT}`);
+  console.log("Server running on port " + PORT);
 });
